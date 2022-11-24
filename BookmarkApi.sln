@@ -5,7 +5,12 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoldenGuillaume.BookmarkApi.Web", "src\GoldenGuillaume.BookmarkApi.Web\GoldenGuillaume.BookmarkApi.Web.csproj", "{7A636FC4-CD15-417F-80AF-79E057B4D85B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D92555DD-43C6-4D8B-9BFE-19B6F05B8C79}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{4677451B-B8DD-497A-9821-E1ADA1F530D5}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +25,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{7A636FC4-CD15-417F-80AF-79E057B4D85B} = {D92555DD-43C6-4D8B-9BFE-19B6F05B8C79}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {50ECE94A-15B0-4BEF-AEEB-0E330110959A}
