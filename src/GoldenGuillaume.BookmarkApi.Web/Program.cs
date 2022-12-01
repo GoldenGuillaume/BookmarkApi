@@ -20,6 +20,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
         options.RoutePrefix = string.Empty;
     });
 }
@@ -33,34 +34,26 @@ bookmarksGroup.MapPost("/", SynchronizeBookmarks);
 
 app.Run();
 
+#region Endpoints Implementation
 async Task<IResult> GetBookmarks(IWebHostEnvironment environment)
 {
-    var savedBookmarks = await LoadSavedBookmarks(environment);
-    return savedBookmarks != null ? TypedResults.Ok(savedBookmarks) : TypedResults.Ok();
+    BookmarkTreeNode? savedBookmarks = null;
+    if (File.Exists($"{environment.WebRootPath}{Path.DirectorySeparatorChar}{builder.Configuration.GetValue<string>("BookmarksFileName")}"))
+    {
+        using FileStream stream = File.OpenRead($"{environment.WebRootPath}{Path.DirectorySeparatorChar}{builder.Configuration.GetValue<string>("BookmarksFileName")}");
+        savedBookmarks = await JsonSerializer.DeserializeAsync<BookmarkTreeNode>(stream);
+    }
+    return TypedResults.Ok(savedBookmarks);
 }
 
 async Task<IResult> SynchronizeBookmarks(HttpContext context, IWebHostEnvironment environment, BookmarkTreeNode browserBookmarks)
 {
-    var savedBookmarks = await LoadSavedBookmarks(environment);
-    if (savedBookmarks != null && JsonSerializer.Serialize(savedBookmarks) != JsonSerializer.Serialize(browserBookmarks))
-    {
-
-    }
-
-    string filePath = $"{environment.WebRootPath}{Path.DirectorySeparatorChar}{builder.Configuration.GetValue<string>("BookmarksFileName")}";
-    using FileStream stream = File.Create(filePath);
+    using FileStream stream = File.Create($"{environment.WebRootPath}{Path.DirectorySeparatorChar}{builder.Configuration.GetValue<string>("BookmarksFileName")}");
     await JsonSerializer.SerializeAsync(stream, browserBookmarks, new JsonSerializerOptions { WriteIndented = true });
     await stream.DisposeAsync();
-
-    return savedBookmarks == null ? TypedResults.Created(context.Request.Path) : TypedResults.Ok(browserBookmarks);
+    return TypedResults.Created(context.Request.Path);
 }
 
-async Task<BookmarkTreeNode?> LoadSavedBookmarks(IWebHostEnvironment environment)
-{
-    if (File.Exists($"{environment.WebRootPath}{Path.DirectorySeparatorChar}{builder.Configuration.GetValue<string>("BookmarksFileName")}"))
-    {
-        using FileStream stream = File.OpenRead($"{environment.WebRootPath}{Path.DirectorySeparatorChar}{builder.Configuration.GetValue<string>("BookmarksFileName")}");
-        return await JsonSerializer.DeserializeAsync<BookmarkTreeNode>(stream);
-    }
-    return await Task.FromResult<BookmarkTreeNode?>(null);
-}
+#endregion
+
+
